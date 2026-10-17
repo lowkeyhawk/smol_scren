@@ -139,6 +139,27 @@ git commit -m "scaffold: project file, manifest, app entry"
 - Create: `Settings.Tests/Settings.Tests.csproj`
 - Create: `Settings.Tests/SettingsTests.cs`
 
+**Test project file** (`Settings.Tests/Settings.Tests.csproj`):
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\smolscren.csproj" />
+  </ItemGroup>
+</Project>
+```
+
 **Interfaces:**
 - Produces: `Settings` class with `Load()`, `Save()`, properties `VideoPath`, `Left`, `Top`, `Width`, `Height`, `KeepOnTop`
 
@@ -621,6 +642,7 @@ git commit -m "feat(tray): system tray icon with unlock, keep-on-top, open, exit
 using System;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Microsoft.Win32;
 
