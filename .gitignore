@@ -1,2 +1,22 @@
+# Build output
 bin/
 obj/
+publish/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userprefs
+
+# JetBrains Rider
+.idea/
+*.DotSettings.user
+
+# Logs and build caches
+*.log
+*.binlog
+
+# OS cruft
+Thumbs.db
+Desktop.ini
