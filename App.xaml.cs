@@ -2,7 +2,7 @@ using System.Windows;
 
 namespace smolscren;
 
-public partial class App : Application
+public partial class App : System.Windows.Application
 {
     public string? StartupVideoPath { get; private set; }
 
