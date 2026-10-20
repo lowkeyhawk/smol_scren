@@ -23,5 +23,34 @@
                 CornerRadius="4"
                 Visibility="Collapsed"
                 IsHitTestVisible="False"/>
+        <!-- Corner grips: only present while unlocked, so they are the sole resize path
+             (WindowStyle=None forces ResizeMode=NoResize). Background must be non-null
+             or WPF makes the Thumb unhit-testable. -->
+        <Grid x:Name="GripLayer" Visibility="Collapsed">
+            <Thumb x:Name="GripTopLeft"
+                   Width="18" Height="18"
+                   HorizontalAlignment="Left" VerticalAlignment="Top"
+                   Cursor="SizeNWSE"
+                   Background="#40FFFFFF" BorderBrush="#80FFFFFF" BorderThickness="1"
+                   DragStarted="Grip_DragStarted" DragDelta="GripTopLeft_DragDelta"/>
+            <Thumb x:Name="GripTopRight"
+                   Width="18" Height="18"
+                   HorizontalAlignment="Right" VerticalAlignment="Top"
+                   Cursor="SizeNESW"
+                   Background="#40FFFFFF" BorderBrush="#80FFFFFF" BorderThickness="1"
+                   DragStarted="Grip_DragStarted" DragDelta="GripTopRight_DragDelta"/>
+            <Thumb x:Name="GripBottomLeft"
+                   Width="18" Height="18"
+                   HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                   Cursor="SizeNESW"
+                   Background="#40FFFFFF" BorderBrush="#80FFFFFF" BorderThickness="1"
+                   DragStarted="Grip_DragStarted" DragDelta="GripBottomLeft_DragDelta"/>
+            <Thumb x:Name="GripBottomRight"
+                   Width="18" Height="18"
+                   HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                   Cursor="SizeNWSE"
+                   Background="#40FFFFFF" BorderBrush="#80FFFFFF" BorderThickness="1"
+                   DragStarted="Grip_DragStarted" DragDelta="GripBottomRight_DragDelta"/>
+        </Grid>
     </Grid>
 </Window>

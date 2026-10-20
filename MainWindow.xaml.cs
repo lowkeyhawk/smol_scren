@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Controls.Primitives;
 using Microsoft.Win32;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
@@ -143,6 +144,7 @@ public partial class MainWindow : Window
     private void UpdateVisualState()
     {
         UnlockBorder.Visibility = _stateManager.IsLocked ? Visibility.Collapsed : Visibility.Visible;
+        GripLayer.Visibility = _stateManager.IsLocked ? Visibility.Collapsed : Visibility.Visible;
         _trayIcon?.UpdateState(_stateManager.IsLocked, Topmost);
     }
 
@@ -165,6 +167,76 @@ public partial class MainWindow : Window
             DragMove();
         }
         base.OnMouseLeftButtonDown(e);
+    }
+
+    // Corner-grip resize — only reachable while unlocked (GripLayer is collapsed when locked).
+    // WindowStyle=None forces ResizeMode=NoResize, so these grips are the sole resize path.
+    //
+    // DragDelta is deliberately NOT used for the geometry: Thumb.DragDeltaEventArgs is
+    // measured relative to the Thumb itself, and the Thumb rides along with the window as
+    // it grows. Each delta therefore arrives as (cursorDelta - windowGrowth), which solves
+    // to exactly half the cursor travel — a 120px drag only grew the window 62px. Reading
+    // Mouse.GetPosition(null) gives the cursor's absolute screen position instead, which
+    // has no such feedback. Both are in device-independent pixels, so they compose.
+    private double _dragLeft, _dragTop, _dragWidth, _dragHeight;
+    private System.Windows.Point _dragStartMouse;
+
+    // Absolute screen position of the cursor, in device-independent pixels.
+    // Mouse.GetPosition(null) is relative to this window's own client origin, so the
+    // window's Left/Top have to be added back. Working in absolute screen space is what
+    // keeps the top-left grips from feeding the window's own movement back into itself.
+    private System.Windows.Point CursorScreen()
+    {
+        var m = System.Windows.Input.Mouse.GetPosition(null);
+        return new System.Windows.Point(m.X + Left, m.Y + Top);
+    }
+
+    private const double GripMinWidth = 160;
+    private const double GripMinHeight = 120;
+
+    private void Grip_DragStarted(object sender, DragStartedEventArgs e)
+    {
+        _dragLeft = Left;
+        _dragTop = Top;
+        _dragWidth = Width;
+        _dragHeight = Height;
+        _dragStartMouse = CursorScreen();
+    }
+
+    private void GripTopLeft_DragDelta(object sender, DragDeltaEventArgs e)
+    {
+        var m = CursorScreen();
+        var w = Math.Max(GripMinWidth, _dragWidth - (m.X - _dragStartMouse.X));
+        var h = Math.Max(GripMinHeight, _dragHeight - (m.Y - _dragStartMouse.Y));
+        Left = _dragLeft + (_dragWidth - w);
+        Top = _dragTop + (_dragHeight - h);
+        Width = w;
+        Height = h;
+    }
+
+    private void GripTopRight_DragDelta(object sender, DragDeltaEventArgs e)
+    {
+        var m = CursorScreen();
+        var h = Math.Max(GripMinHeight, _dragHeight - (m.Y - _dragStartMouse.Y));
+        Top = _dragTop + (_dragHeight - h);
+        Width = Math.Max(GripMinWidth, _dragWidth + (m.X - _dragStartMouse.X));
+        Height = h;
+    }
+
+    private void GripBottomLeft_DragDelta(object sender, DragDeltaEventArgs e)
+    {
+        var m = CursorScreen();
+        var w = Math.Max(GripMinWidth, _dragWidth - (m.X - _dragStartMouse.X));
+        Left = _dragLeft + (_dragWidth - w);
+        Width = w;
+        Height = Math.Max(GripMinHeight, _dragHeight + (m.Y - _dragStartMouse.Y));
+    }
+
+    private void GripBottomRight_DragDelta(object sender, DragDeltaEventArgs e)
+    {
+        var m = CursorScreen();
+        Width = Math.Max(GripMinWidth, _dragWidth + (m.X - _dragStartMouse.X));
+        Height = Math.Max(GripMinHeight, _dragHeight + (m.Y - _dragStartMouse.Y));
     }
 
     // Right-click context menu when unlocked

@@ -7,12 +7,15 @@ underneath it.
 
 A system tray icon and a global hotkey are the only ways to interact with it while locked.
 
-> **Status: early development.** The design spec and implementation plan are complete, and
-> the non-UI core (project scaffold, settings persistence, window state management) is
-> implemented and reviewed. The hotkey, tray, and window layers are still landing, so the
-> app is **not yet runnable end-to-end**: it builds and the settings tests pass, but there
-> is nothing to launch yet. The plan document linked under [Development](#development) is
-> the source of truth for what is done.
+> **Status: feature-complete, manual testing outstanding.** The spec and plan are
+> implemented: project scaffold, settings persistence, window state (click-through lock /
+> unlock), global hotkey, system tray, and the main window with video playback, drag,
+> corner-grip resize, and context menu. It builds clean, the settings tests pass, and it
+> publishes a single-file `.exe`.
+>
+> What is left is the **manual test matrix** (spec §6.1) — that needs a human at the
+> keyboard to judge playback smoothness and click-through feel. The plan document linked
+> under [Development](#development) is the source of truth for what is done.
 
 ## What it does
 
